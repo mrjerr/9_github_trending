@@ -1,14 +1,13 @@
 import requests
 from datetime import date, timedelta
 
-API_URL = 'https://api.github.com'
-API_SEARCH_REPO = '/search/repositories'
-API_REPO_ISSUES = '/repos/{owner}/{repo}/issues'
-PERIOD = date.today() - timedelta(days=7)
-PARAMS = {'q': 'created:>{}'.format(PERIOD), 'sort': 'stars'}
-
 
 def get_trending_repositories(top_size):
+
+    API_URL = 'https://api.github.com'
+    API_SEARCH_REPO = '/search/repositories'
+    PERIOD = date.today() - timedelta(days=7)
+    PARAMS = {'q': 'created:>{}'.format(PERIOD), 'sort': 'stars'}
 
     json_data = requests.get(API_URL + API_SEARCH_REPO, params=PARAMS).json()
     result = [
@@ -24,7 +23,8 @@ def get_trending_repositories(top_size):
 
 
 def get_open_issues_amount(repo_owner, repo_name):
-
+    API_URL = 'https://api.github.com'
+    API_REPO_ISSUES = '/repos/{owner}/{repo}/issues'
     json_data = requests.get(
         API_URL +
         API_REPO_ISSUES.format(owner=repo_owner, repo=repo_name)
