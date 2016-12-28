@@ -3,14 +3,12 @@ from datetime import date, timedelta
 
 
 def get_trending_repositories(top_size):
+    url_search_repo = 'https://api.github.com/search/repositories'
+    period = date.today() - timedelta(days=7)
+    params = {'q': 'created:>{}'.format(period), 'sort': 'stars'}
 
-    API_URL = 'https://api.github.com'
-    API_SEARCH_REPO = '/search/repositories'
-    PERIOD = date.today() - timedelta(days=7)
-    PARAMS = {'q': 'created:>{}'.format(PERIOD), 'sort': 'stars'}
-
-    json_data = requests.get(API_URL + API_SEARCH_REPO, params=PARAMS).json()
-    result = [
+    json_data = requests.get(url_search_repo, params=params).json()
+    repositories_data = [
         {
             'html_url': i['html_url'],
             'description': i['description'],
@@ -19,16 +17,13 @@ def get_trending_repositories(top_size):
             'repo_owner': i['owner']['login']}
         for i in json_data['items'][:top_size]]
 
-    return result
+    return repositories_data
 
 
 def get_open_issues_amount(repo_owner, repo_name):
-    API_URL = 'https://api.github.com'
-    API_REPO_ISSUES = '/repos/{owner}/{repo}/issues'
+    url_issues_repo = 'https://api.github.com/repos/{owner}/{repo}/issues'
     json_data = requests.get(
-        API_URL +
-        API_REPO_ISSUES.format(owner=repo_owner, repo=repo_name)
-    ).json()
+        url_issues_repo.format(owner=repo_owner, repo=repo_name)).json()
     if isinstance(json_data, dict):
         raise SystemExit(json_data['message'])
     return [(i['url'], i['title']) for i in json_data]
